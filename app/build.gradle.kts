@@ -81,5 +81,6 @@ dependencies {
     implementation("androidx.compose.runtime:runtime-livedata")
     // Optional - Integration with RxJava
     implementation("androidx.compose.runtime:runtime-rxjava2")
+    implementation("com.google.code.gson:gson:2.10")
 
 }

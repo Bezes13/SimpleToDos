@@ -15,7 +15,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val sharedPreferencesManager = SharedPreferencesManager(this)
-        val mainViewModel: MainViewModel by viewModels()
+        val mainViewModel: MainViewModel by viewModels {
+            MainViewModelFactory(sharedPreferencesManager)
+        }
         setContent {
             SimpleToDoTheme(darkTheme = true) {
                 // A surface container using the 'background' color from the theme
@@ -23,8 +25,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val list = mainViewModel._retrievedList;
-                    MainScreen(sharedPreferencesManager = sharedPreferencesManager, retrievedList = list, updateList = mainViewModel::updateList, context = this)
+                    MainScreen(mainViewModel)
                 }
             }
         }

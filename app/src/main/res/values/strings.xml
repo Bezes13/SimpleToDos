@@ -3,4 +3,5 @@
     <string name="Header">ToDo\'s</string>
     <string name="todoList">todoList</string>
     <string name="newTodo">Neues TODO\n</string>
+    <string name="doneList">doneList</string>
 </resources>

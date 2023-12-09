@@ -63,7 +63,7 @@ fun MainScreen(
             ),
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
-        TodoList(
+        ScrollableTodoList(
             updateList = updateList,
             doneList = doneList,
             todoList = todoList,

@@ -57,8 +57,7 @@ fun MainScreen(
             text = stringResource(id = R.string.Header),
             fontSize = 50.sp,
             style = TextStyle(
-                color = Color.White, fontWeight = FontWeight.ExtraBold,
-
+                fontWeight = FontWeight.ExtraBold,
                 textDecoration = TextDecoration.Underline
             ),
             modifier = Modifier.align(Alignment.CenterHorizontally)

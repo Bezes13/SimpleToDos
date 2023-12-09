@@ -15,7 +15,7 @@ fun ScrollableTodoList(
     markAsDone: (String) -> Unit
 ) {
     LazyColumn(Modifier.fillMaxHeight(0.85f)) {
-        items(1) {
+        item {
             todoList.forEach {
                 TodoListPosition(it, doneList, updateList, markAsDone)
             }

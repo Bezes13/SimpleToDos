@@ -9,10 +9,13 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -32,6 +35,8 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.simpletodo.ui.theme.AddColor
+import com.example.simpletodo.ui.theme.textColor
 
 @Composable
 fun MainScreen(
@@ -42,7 +47,7 @@ fun MainScreen(
     MainScreen(mainViewModel::updateList, retrievedList, doneList, mainViewModel::markAsDone)
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
     updateList: (String, Boolean) -> Unit,
@@ -57,6 +62,7 @@ fun MainScreen(
             text = stringResource(id = R.string.Header),
             fontSize = 50.sp,
             style = TextStyle(
+                color = textColor,
                 fontWeight = FontWeight.ExtraBold,
                 textDecoration = TextDecoration.Underline
             ),
@@ -83,7 +89,13 @@ fun MainScreen(
                 modifier = Modifier
                     .weight(1f)
                     .height(50.dp)
-                    .align(Alignment.CenterVertically)
+                    .align(Alignment.CenterVertically),
+                textStyle = TextStyle(
+                    color = textColor,
+                    fontWeight = FontWeight.ExtraBold,
+                    textDecoration = TextDecoration.Underline
+                ),
+                colors = TextFieldDefaults.outlinedTextFieldColors(focusedBorderColor = textColor, unfocusedBorderColor = AddColor)
             )
 
             SmallFloatingActionButton(
@@ -92,7 +104,7 @@ fun MainScreen(
                     newTodoText = ""
                     keyboardController?.hide()
                 },
-                containerColor = Color.Green,
+                containerColor = AddColor,
                 contentColor = Color.Black,
                 modifier = Modifier
                     .size(50.dp) // Passen Sie die Größe nach Bedarf an

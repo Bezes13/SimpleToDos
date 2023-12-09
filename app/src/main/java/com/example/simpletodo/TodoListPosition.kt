@@ -18,12 +18,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.simpletodo.ui.theme.checkColor
+import com.example.simpletodo.ui.theme.textColor
+import com.example.simpletodo.ui.theme.deleteColor
 
 @Composable
 fun TodoListPosition(
@@ -54,6 +56,7 @@ fun TodoListPosition(
                     Text(
                         text = item,
                         style = TextStyle(
+                            color = textColor,
                             fontSize = (getFontSize(item.length)).sp,
                             textDecoration = if (doneList.contains(item)) TextDecoration.LineThrough else TextDecoration.None,
 
@@ -70,7 +73,7 @@ fun TodoListPosition(
                             .size(20.dp)
                             .align(Alignment.CenterVertically),
                         onClick = { markAsDone(item) },
-                        containerColor = Color.Green
+                        containerColor = checkColor
                     ) {
                         Icon(Icons.Filled.Check, contentDescription = "Mark as Done")
                     }
@@ -79,7 +82,7 @@ fun TodoListPosition(
 
             SmallFloatingActionButton(
                 onClick = { updateList(item, false) },
-                containerColor = Color.Red,
+                containerColor = deleteColor,
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
             ) {

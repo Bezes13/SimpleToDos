@@ -30,6 +30,9 @@ class MainViewModel(private var sharedPreferencesManager: SharedPreferencesManag
     }
 
     fun updateList(text: String, addItem: Boolean) {
+        if(text == ""){
+            return
+        }
         val currentList = _retrievedList.value?.toMutableList() ?: mutableListOf()
         val doneList = _doneList.value?.toMutableList() ?: mutableListOf()
 

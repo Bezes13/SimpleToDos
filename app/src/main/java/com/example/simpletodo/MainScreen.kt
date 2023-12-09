@@ -1,17 +1,14 @@
 package com.example.simpletodo
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SmallFloatingActionButton
@@ -23,12 +20,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -44,6 +44,7 @@ fun MainScreen(
     MainScreen(mainViewModel::updateList, retrievedList, doneList, mainViewModel::markAsDone)
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun MainScreen(
     updateList: (String, Boolean) -> Unit,
@@ -52,6 +53,7 @@ fun MainScreen(
     markAsDone: (String) -> Unit
 ) {
     var newTodoText by remember { mutableStateOf("") }
+    val keyboardController = LocalSoftwareKeyboardController.current
     Column {
         Text(
             text = stringResource(id = R.string.Header),
@@ -64,77 +66,40 @@ fun MainScreen(
             ),
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
-        todoList.forEach {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(80.dp)
-                ) {
-                    Box(modifier = Modifier
-                        .weight(1f)
-                        .align(Alignment.CenterVertically)
-                        .fillMaxHeight()){
-                        Row (
-                            Modifier
-                                .padding(horizontal = 10.dp)
-                                .fillMaxHeight()){
-                            Text(
-                                text = it,
-                                style = TextStyle(
-                                    textDecoration = if (doneList.contains(it)) TextDecoration.LineThrough else TextDecoration.None
-                                ),
-                                modifier = Modifier.align(Alignment.CenterVertically) // Takes up available space
-                            )
-                            SmallFloatingActionButton(
-                                modifier = Modifier
-                                    .padding(horizontal = 10.dp)
-                                    .size(20.dp)
-                                    .align(Alignment.CenterVertically),
-                                onClick = { markAsDone(it) },
-                                containerColor = Color.Gray
-                            ) {
-                                Icon(Icons.Filled.Check, contentDescription = "Mark as Done")
-                            }
-                        }
-                    }
-                    SmallFloatingActionButton(
-                        onClick = { updateList(it, false) },
-                        containerColor = Color.Red,
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                    ) {
-                        Icon(Icons.Filled.Clear, "Delete Todo")
-                    }
-                }
-            }
+        TodoList(updateList= updateList, doneList = doneList, todoList = todoList, markAsDone = markAsDone)
 
-        }
-
-        Row (
-            Modifier
+        Row(
+            modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp)){
+                .height(50.dp)
+        ) {
             OutlinedTextField(
                 value = newTodoText,
                 onValueChange = { newTodoText = it },
-                label = { Text(stringResource(id = R.string.newTodo)) },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(
+                    onDone = {keyboardController?.hide()}),
                 modifier = Modifier
-                    .fillMaxHeight()
+                    .weight(1f)
+                    .height(50.dp)
                     .align(Alignment.CenterVertically)
             )
+
             SmallFloatingActionButton(
-                onClick = { updateList(newTodoText, true) },
+                onClick = {
+                    updateList(newTodoText, true)
+                    newTodoText = ""
+                    keyboardController?.hide()      },
                 containerColor = Color.Green,
                 contentColor = Color.Black,
-                modifier = Modifier.fillMaxHeight()
+                modifier = Modifier
+                    .size(50.dp) // Passen Sie die Größe nach Bedarf an
+                    .align(Alignment.CenterVertically)
             ) {
                 Icon(Icons.Filled.Add, "Add new TODO")
             }
         }
+
     }
 }
 
@@ -142,7 +107,7 @@ fun MainScreen(
 @Preview
 fun PreviewMainScreen() {
     MainScreen({ _, _ -> },
-        listOf("Koks essen", "Kokain Bär sehen", "Apps Coden"),
+        listOf("Koks essen", "Kokain Bär sehen","sehr sehr sehr extrem langer text, der Probleme macht", "Apps Coden"),
         listOf("Kokain Bär sehen"),
         { _ -> })
 }

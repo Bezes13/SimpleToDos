@@ -19,7 +19,7 @@ class MainActivity : ComponentActivity() {
             MainViewModelFactory(sharedPreferencesManager)
         }
         setContent {
-            SimpleToDoTheme(darkTheme = true) {
+            SimpleToDoTheme() {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),

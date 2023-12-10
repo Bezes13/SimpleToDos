@@ -26,7 +26,7 @@ val backgroundColor = Color(0xFFFFDBB5)
 val textColor = Color(0xFF2D3047)
 val deleteColor = Color(0xFFC04ABC)
 val checkColor = Color(0xFFE0A458)
-val AddColor = Color(0xFF419D78)
+val addColor = Color(0xFF419D78)
 
 
 

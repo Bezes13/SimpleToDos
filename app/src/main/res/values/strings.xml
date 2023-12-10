@@ -4,4 +4,8 @@
     <string name="todoList">todoList</string>
     <string name="newTodo">Neues TODO\n</string>
     <string name="doneList">doneList</string>
+    <string name="sharedDoneList">sharedDoneList</string>
+    <string name="sharedTodoList">sharedTodoList</string>
+    <string name="workTodoList">workTodoList</string>
+    <string name="workDoneList">workDoneList</string>
 </resources>

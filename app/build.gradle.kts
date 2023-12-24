@@ -53,7 +53,7 @@ dependencies {
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
-    implementation("androidx.activity:activity-compose:1.8.1")
+    implementation("androidx.activity:activity-compose:1.8.2")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.room:room-ktx:2.6.1")
     testImplementation("junit:junit:4.13.2")
@@ -70,6 +70,8 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     implementation("androidx.compose.material:material")
+    implementation("com.google.accompanist:accompanist-pager:0.21.2-beta")
+    implementation("com.google.accompanist:accompanist-pager-indicators:0.21.2-beta")
 
 
     // Optional - Included automatically by material, only add when you need
@@ -77,7 +79,7 @@ dependencies {
     // custom design system based on Foundation)
 
     // Optional - Integration with activities
-    implementation("androidx.activity:activity-compose:1.8.1")
+    implementation("androidx.activity:activity-compose:1.8.2")
     // Optional - Integration with ViewModels
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
     // Optional - Integration with LiveData

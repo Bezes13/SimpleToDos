@@ -11,8 +11,8 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.SmallFloatingActionButton
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,9 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.example.simpletodo.ui.theme.addColor
 import com.example.simpletodo.ui.theme.textColor
@@ -52,11 +50,11 @@ fun TextInputFieldWithAddButton (updateList: (String, Boolean) -> Unit){
                 .height(50.dp)
                 .align(Alignment.CenterVertically),
             textStyle = TextStyle(
-                color = textColor,
-                fontWeight = FontWeight.ExtraBold,
-                textDecoration = TextDecoration.Underline
-            ),
-            colors = TextFieldDefaults.outlinedTextFieldColors(focusedBorderColor = textColor, unfocusedBorderColor = addColor)
+                color = textColor),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = textColor,
+                unfocusedBorderColor = addColor,
+            )
         )
 
         SmallFloatingActionButton(

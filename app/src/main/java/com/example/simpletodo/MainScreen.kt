@@ -2,9 +2,10 @@ package com.example.simpletodo
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.Text
+import androidx.compose.material.Tab
+import androidx.compose.material.TabRow
+import androidx.compose.material.TabRowDefaults
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -22,7 +23,12 @@ import androidx.compose.ui.unit.sp
 import com.example.simpletodo.ui.theme.addColor
 import com.example.simpletodo.ui.theme.checkColor
 import com.example.simpletodo.ui.theme.textColor
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.pagerTabIndicatorOffset
+import com.google.accompanist.pager.rememberPagerState
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun MainScreen(
     mainViewModel: MainViewModel
@@ -32,6 +38,7 @@ fun MainScreen(
     MainScreen(mainViewModel::updateList, retrievedList, doneList, mainViewModel::markAsDone, mainViewModel::changeTab)
 }
 
+@ExperimentalPagerApi
 @Composable
 fun MainScreen(
     updateList: (String, Boolean) -> Unit,
@@ -43,6 +50,7 @@ fun MainScreen(
     var tabIndex by remember {
         mutableIntStateOf(0)
     }
+    val pagerState = rememberPagerState() // 2.
     val tabs = listOf("Private", "Work", "Shared")
     Column {
         Text(
@@ -57,7 +65,14 @@ fun MainScreen(
         )
         Column(modifier = Modifier.fillMaxWidth()) {
             TabRow(selectedTabIndex = tabIndex,
-                containerColor = addColor, contentColor = textColor) {
+                indicator = { tabPositions -> // 3.
+                    TabRowDefaults.Indicator(
+                        Modifier.pagerTabIndicatorOffset(
+                            pagerState,
+                            tabPositions
+                        )
+                    )},
+                backgroundColor = addColor, contentColor = textColor) {
                 tabs.forEachIndexed { index, title ->
                     Tab(text = { Text(title) },
                         selected = tabIndex == index,
@@ -68,17 +83,23 @@ fun MainScreen(
                     )
                 }
             }
+            HorizontalPager( // 4.
+                count = 3,
+                state = pagerState,
+            ) {
+
             ScrollableTodoList(
                 updateList = updateList,
                 doneList = doneList,
                 todoList = todoList,
                 markAsDone = markAsDone,
-            )
+            )}
             TextInputFieldWithAddButton(updateList)
         }
     }
 }
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 @Preview
 fun PreviewMainScreen() {

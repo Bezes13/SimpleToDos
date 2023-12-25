@@ -8,7 +8,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -29,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.example.simpletodo.ui.theme.addColor
 import com.example.simpletodo.ui.theme.textColor
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun TextInputFieldWithAddButton (updateList: (String, Boolean) -> Unit){
     var newTodoText by remember { mutableStateOf("") }

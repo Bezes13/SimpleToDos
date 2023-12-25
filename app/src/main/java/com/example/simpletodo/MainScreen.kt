@@ -1,12 +1,14 @@
 package com.example.simpletodo
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
 import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
@@ -25,6 +27,7 @@ import com.example.simpletodo.ui.theme.checkColor
 import com.example.simpletodo.ui.theme.textColor
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
 
@@ -35,7 +38,13 @@ fun MainScreen(
 ) {
     val retrievedList by mainViewModel.retrievedList.observeAsState(initial = emptyList())
     val doneList by mainViewModel.doneList.observeAsState(initial = emptyList())
-    MainScreen(mainViewModel::updateList, retrievedList, doneList, mainViewModel::markAsDone, mainViewModel::changeTab)
+    MainScreen(
+        mainViewModel::updateList,
+        retrievedList,
+        doneList,
+        mainViewModel::markAsDone,
+        mainViewModel::changeTab
+    )
 }
 
 @ExperimentalPagerApi
@@ -50,7 +59,19 @@ fun MainScreen(
     var tabIndex by remember {
         mutableIntStateOf(0)
     }
-    val pagerState = rememberPagerState() // 2.
+
+    val pagerState = rememberPagerState()
+    LaunchedEffect(pagerState.currentPage) {
+        val newTabIndex = pagerState.currentPage
+        if (newTabIndex != tabIndex) {
+            tabIndex = newTabIndex
+            swapTab(tabIndex)
+        }
+    }
+
+    LaunchedEffect(tabIndex) {
+        pagerState.scrollToPage(tabIndex)
+    }
     val tabs = listOf("Private", "Work", "Shared")
     Column {
         Text(
@@ -63,38 +84,49 @@ fun MainScreen(
             ),
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
-        Column(modifier = Modifier.fillMaxWidth()) {
-            TabRow(selectedTabIndex = tabIndex,
-                indicator = { tabPositions -> // 3.
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(1f)
+        ) {
+            TabRow(
+                selectedTabIndex = tabIndex,
+                indicator = { tabPositions ->
                     TabRowDefaults.Indicator(
                         Modifier.pagerTabIndicatorOffset(
                             pagerState,
                             tabPositions
                         )
-                    )},
-                backgroundColor = addColor, contentColor = textColor) {
+                    )
+                },
+                backgroundColor = addColor, contentColor = textColor
+            ) {
                 tabs.forEachIndexed { index, title ->
-                    Tab(text = { Text(title) },
+                    Tab(
+                        text = { Text(title) },
                         selected = tabIndex == index,
-                        onClick = { tabIndex = index
+                        onClick = {
+                            tabIndex = index
                             swapTab(index)
                         },
                         selectedContentColor = checkColor, unselectedContentColor = textColor
                     )
                 }
             }
-            HorizontalPager( // 4.
+            HorizontalPager(
                 count = 3,
                 state = pagerState,
             ) {
-
-            ScrollableTodoList(
-                updateList = updateList,
-                doneList = doneList,
-                todoList = todoList,
-                markAsDone = markAsDone,
-            )}
-            TextInputFieldWithAddButton(updateList)
+                Column {
+                    ScrollableTodoList(
+                        updateList = updateList,
+                        doneList = doneList,
+                        todoList = todoList,
+                        markAsDone = markAsDone,
+                    )
+                    TextInputFieldWithAddButton(updateList)
+                }
+            }
         }
     }
 }
@@ -111,5 +143,5 @@ fun PreviewMainScreen() {
             "Apps Coden"
         ),
         listOf("Kokain Bär sehen"),
-        { _ -> },{ _ -> })
+        { _ -> }, { _ -> })
 }

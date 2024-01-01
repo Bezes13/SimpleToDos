@@ -12,6 +12,7 @@ import com.google.firebase.database.getValue
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 class MainViewModel(private var sharedPreferencesManager: SharedPreferencesManager) : ViewModel() {
     //private val database = Firebase.database("https://simpletodo-6b2a6-default-rtdb.europe-west1.firebasedatabase.app/")
@@ -31,8 +32,9 @@ class MainViewModel(private var sharedPreferencesManager: SharedPreferencesManag
     private var tabIndex = 0
 
     init {
-        _retrievedList.value = sharedPreferencesManager.getList(sharedPreferencesManager.context.getString(R.string.todoList))
-        _doneList.value = sharedPreferencesManager.getList(sharedPreferencesManager.context.getString(R.string.doneList))
+        val type = object : TypeToken<List<String>>() {}.type
+        database.getReference(sharedPreferencesManager.context.getString(_todoListStringIds[0])).get().addOnSuccessListener { _retrievedList.value = Gson().fromJson(it.value.toString(), type) }
+        database.getReference(sharedPreferencesManager.context.getString(_doneListStringIds[0])).get().addOnSuccessListener { _doneList.value = Gson().fromJson(it.value.toString(), type) }
     }
 
     fun markAsDone(text: String){
@@ -68,21 +70,23 @@ class MainViewModel(private var sharedPreferencesManager: SharedPreferencesManag
     }
 
     fun changeTab(index: Int){
-        _retrievedList.value = sharedPreferencesManager.getList(sharedPreferencesManager.context.getString(_todoListStringIds[index]))
-        _doneList.value = sharedPreferencesManager.getList(sharedPreferencesManager.context.getString(_doneListStringIds[index]))
+        getList(sharedPreferencesManager.context.getString(_todoListStringIds[index]))
+        getList(sharedPreferencesManager.context.getString(_doneListStringIds[index]))
         tabIndex = index
     }
 
     private fun saveList(myList: List<String>, listID: Int) {
-        sharedPreferencesManager.saveList(
-            sharedPreferencesManager.context.getString(listID),
-            myList
-        )
+        //sharedPreferencesManager.saveList(sharedPreferencesManager.context.getString(listID), myList)
         saveInFirebase(myList, listID)
     }
 
+    fun getList(key: String) {
+        val type = object : TypeToken<List<String>>() {}.type
+        database.getReference(key).get().addOnSuccessListener { _retrievedList.value = Gson().fromJson(it.value.toString(), type) }
+    }
+
     private fun saveInFirebase(myList: List<String>, listID: Int){
-        val myRef = database.getReference(listID.toString())
+        val myRef = database.getReference(sharedPreferencesManager.context.getString(listID))
         val gson = Gson()
         val json = gson.toJson(myList)
         myRef.setValue(json)

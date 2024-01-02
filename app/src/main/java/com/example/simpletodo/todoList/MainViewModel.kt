@@ -193,8 +193,14 @@ class MainViewModel(private var sharedPreferencesManager: SharedPreferencesManag
         myRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val value = dataSnapshot.getValue<String>()
-                _sharedTodoList.value = Gson().fromJson(json, type) ?: emptyList()
+                if (_todoListStringIds.contains(listID)){
+                    _sharedTodoList.value = Gson().fromJson(value, type) ?: emptyList()
+                }else{
+                    _sharedDoneList.value = Gson().fromJson(value, type) ?: emptyList()
+                }
+
                 Log.d(TAG, "Value is: $value")
+                Log.d(TAG, "Value is: ${_sharedTodoList.value}")
             }
 
             override fun onCancelled(error: DatabaseError) {

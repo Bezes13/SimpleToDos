@@ -7,6 +7,10 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import com.example.simpletodo.manager.SharedPreferencesManager
+import com.example.simpletodo.todoList.MainScreen
+import com.example.simpletodo.todoList.MainViewModel
+import com.example.simpletodo.todoList.MainViewModelFactory
 import com.example.simpletodo.ui.theme.SimpleToDoTheme
 import com.example.simpletodo.ui.theme.backgroundColor
 import com.google.firebase.FirebaseApp
@@ -21,8 +25,7 @@ class MainActivity : ComponentActivity() {
             MainViewModelFactory(sharedPreferencesManager)
         }
         setContent {
-            SimpleToDoTheme() {
-                // A surface container using the 'background' color from the theme
+            SimpleToDoTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = backgroundColor,

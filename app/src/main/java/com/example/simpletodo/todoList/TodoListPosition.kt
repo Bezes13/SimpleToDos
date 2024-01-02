@@ -1,4 +1,4 @@
-package com.example.simpletodo
+package com.example.simpletodo.todoList
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -102,7 +102,7 @@ fun TodoListPosition(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(80.dp) // Increase the height for the text fields
+                    .height(80.dp)
             ) {
                 Box(
                     modifier = Modifier
@@ -131,7 +131,7 @@ fun TodoListPosition(
                     onClick = { markAsDone(item) },
                     containerColor = checkColor,
                     modifier = Modifier
-                        .align(Alignment.CenterVertically)
+                        .align(Alignment.CenterVertically).size(30.dp)
                 ) {
                     Icon(Icons.Filled.Check, "Mark as Done")
                 }
@@ -140,7 +140,7 @@ fun TodoListPosition(
                     onClick = { edit = true },
                     containerColor = checkColor,
                     modifier = Modifier
-                        .align(Alignment.CenterVertically)
+                        .align(Alignment.CenterVertically).size(30.dp)
                 ) {
                     Icon(Icons.Filled.Edit, "Edit")
                 }
@@ -149,7 +149,7 @@ fun TodoListPosition(
                     onClick = { updateList(item, false) },
                     containerColor = deleteColor,
                     modifier = Modifier
-                        .align(Alignment.CenterVertically)
+                        .align(Alignment.CenterVertically).size(30.dp)
                 ) {
                     Icon(Icons.Filled.Clear, "Delete Todo")
                 }
@@ -162,8 +162,7 @@ fun TodoListPosition(
 @Composable
 fun PreviewItem() {
     TodoListPosition(
-        item = "Leben machen mit sehr sehr langem Text, wir brauchen mehr text" +
-                "",
+        item = "Again, we want this to be an very long text, so the Preview has something todo",
         doneList = emptyList(),
         updateList = { _, _ -> },
         replaceItem = { _, _, _ -> },

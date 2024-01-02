@@ -1,4 +1,4 @@
-package com.example.simpletodo
+package com.example.simpletodo.manager
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -15,12 +15,6 @@ class SharedPreferencesManager(val context: Context) {
         val json = gson.toJson(list)
         editor.putString(key, json)
         editor.apply()
-    }
-
-    fun getList(key: String): List<String> {
-        val json = sharedPreferences.getString(key, null)
-        val type = object : TypeToken<List<String>>() {}.type
-        return Gson().fromJson(json, type) ?: emptyList()
     }
 
     fun getList(keyId: Int): List<String> {

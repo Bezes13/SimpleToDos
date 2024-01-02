@@ -1,4 +1,4 @@
-package com.example.simpletodo
+package com.example.simpletodo.todoList
 
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -41,6 +41,6 @@ fun PreviewToDoList() {
             "1234567890123456789",
             "123456789012345678901",
             "very long data very long data very long data",
-            "very long data very long data very long data mehr mehr merh askdjaosdmasdmlmads"
+            "very long data very long data very long data, we need more stuff and more damn text"
         ), doneList = listOf("more data"), updateList = { _, _ -> }, markAsDone = {}, replaceItem = {_,_,_ ->})
 }

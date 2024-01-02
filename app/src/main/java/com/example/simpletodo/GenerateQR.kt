@@ -5,7 +5,7 @@ import android.graphics.Color
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.common.BitMatrix
-
+// TODO implement QR Code to scan
 fun generateQRCode(text: String, width: Int, height: Int): Bitmap {
     val bitMatrix: BitMatrix = MultiFormatWriter().encode(text, BarcodeFormat.QR_CODE, width, height)
     val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565)

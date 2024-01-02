@@ -7,7 +7,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
@@ -15,36 +14,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
- val DarkColorScheme = darkColorScheme(
-    primary = primary,
-    secondary = secondary,
-    tertiary = tertiary
-)
-
-
 val backgroundColor = Color(0xFFFFDBB5)
 val textColor = Color(0xFF2D3047)
 val deleteColor = Color(0xFFC04ABC)
 val checkColor = Color(0xFFE0A458)
 val addColor = Color(0xFF419D78)
 
-
-
-
-private val LightColorScheme = lightColorScheme(
-    primary = primary,
-    secondary = secondary,
-    tertiary = tertiary
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+ val DarkColorScheme = darkColorScheme(
+    primary = backgroundColor,
+    secondary = textColor,
+    tertiary = deleteColor
 )
 
 @Composable
@@ -60,13 +39,12 @@ fun SimpleToDoTheme(
         }
 
         darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+        else -> DarkColorScheme
     }
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            //window.statusBarColor = colorScheme.primary.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
         }
     }

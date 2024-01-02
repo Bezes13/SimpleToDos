@@ -1,7 +1,8 @@
-package com.example.simpletodo
+package com.example.simpletodo.todoList
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.simpletodo.manager.SharedPreferencesManager
 
 class MainViewModelFactory(
     private val sharedPreferencesManager: SharedPreferencesManager,

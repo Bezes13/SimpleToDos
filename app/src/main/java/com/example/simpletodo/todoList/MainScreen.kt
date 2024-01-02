@@ -1,4 +1,4 @@
-package com.example.simpletodo
+package com.example.simpletodo.todoList
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,6 +31,8 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.simpletodo.R
+import com.example.simpletodo.generateQRCode
 import com.example.simpletodo.ui.theme.addColor
 import com.example.simpletodo.ui.theme.checkColor
 import com.example.simpletodo.ui.theme.deleteColor
@@ -45,13 +47,18 @@ import com.google.accompanist.pager.rememberPagerState
 fun MainScreen(
     mainViewModel: MainViewModel
 ) {
-    val retrievedList by mainViewModel.todoList.observeAsState(initial = emptyList())
-    val doneList by mainViewModel.doneList.observeAsState(initial = emptyList())
+    val privateTodoList by mainViewModel.privateTodoList.observeAsState(initial = emptyList())
+    val privateDoneList by mainViewModel.privateDoneList.observeAsState(initial = emptyList())
+    val workTodoList by mainViewModel.workTodoList.observeAsState(initial = emptyList())
+    val workDoneList by mainViewModel.workDoneList.observeAsState(initial = emptyList())
+    val sharedTodoList by mainViewModel.sharedTodoList.observeAsState(initial = emptyList())
+    val sharedDoneList by mainViewModel.sharedDoneList.observeAsState(initial = emptyList())
+
     MainScreen(
         mainViewModel::updateList,
         mainViewModel::updateList,
-        retrievedList,
-        doneList,
+        listOf(privateTodoList, workTodoList, sharedTodoList),
+        listOf(privateDoneList, workDoneList, sharedDoneList),
         mainViewModel::markAsDone,
         mainViewModel::changeTab
     )
@@ -62,8 +69,8 @@ fun MainScreen(
 fun MainScreen(
     updateList: (String, Boolean) -> Unit,
     replaceItem: (String, Boolean, String) -> Unit,
-    todoList: List<String>,
-    doneList: List<String>,
+    todoLists: List<List<String>>,
+    doneLists: List<List<String>>,
     markAsDone: (String) -> Unit,
     swapTab: (Int) -> Unit
 ) {
@@ -152,8 +159,8 @@ fun MainScreen(
                 Column {
                     ScrollableTodoList(
                         updateList = updateList,
-                        doneList = doneList,
-                        todoList = todoList,
+                        doneList = doneLists[it],
+                        todoList = todoLists[it],
                         markAsDone = markAsDone,
                         replaceItem = replaceItem
                     )
@@ -170,12 +177,12 @@ fun MainScreen(
 fun PreviewMainScreen() {
     MainScreen({ _, _ -> },
         { _, _,_ -> },
-        listOf(
-            "Koks essen",
-            "Kokain Bär sehen",
-            "sehr sehr sehr extrem langer text, der Probleme macht",
-            "Apps Coden"
-        ),
-        listOf("Kokain Bär sehen"),
+        listOf(listOf(
+            "food",
+            "eat an apple",
+            "very very long text which could lead to problems",
+            "code Apps"
+        )),
+        listOf( listOf("food")),
         { _ -> }, { _ -> })
 }

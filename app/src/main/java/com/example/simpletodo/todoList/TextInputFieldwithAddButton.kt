@@ -1,4 +1,4 @@
-package com.example.simpletodo
+package com.example.simpletodo.todoList
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth

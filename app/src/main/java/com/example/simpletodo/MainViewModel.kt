@@ -15,10 +15,8 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
 class MainViewModel(private var sharedPreferencesManager: SharedPreferencesManager) : ViewModel() {
-    //private val database = Firebase.database("https://simpletodo-6b2a6-default-rtdb.europe-west1.firebasedatabase.app/")
-
     private val database = Firebase.database
-    private val _retrievedList = MutableLiveData<List<String>>()
+    private val _todoList = MutableLiveData<List<String>>()
     private val _doneList = MutableLiveData<List<String>>()
 
     private val _todoListStringIds =
@@ -26,66 +24,123 @@ class MainViewModel(private var sharedPreferencesManager: SharedPreferencesManag
     private val _doneListStringIds =
         listOf(R.string.doneList, R.string.workDoneList, R.string.sharedDoneList)
 
-    val retrievedList: LiveData<List<String>> get() = _retrievedList
+    val todoList: LiveData<List<String>> get() = _todoList
     val doneList: LiveData<List<String>> get() = _doneList
 
     private var tabIndex = 0
 
     init {
-        val type = object : TypeToken<List<String>>() {}.type
-        database.getReference(sharedPreferencesManager.context.getString(_todoListStringIds[0])).get().addOnSuccessListener { _retrievedList.value = Gson().fromJson(it.value.toString(), type) }
-        database.getReference(sharedPreferencesManager.context.getString(_doneListStringIds[0])).get().addOnSuccessListener { _doneList.value = Gson().fromJson(it.value.toString(), type) }
+        // read private and work from local space
+        _todoList.value = sharedPreferencesManager.getList(_todoListStringIds[0])
+        _doneList.value = sharedPreferencesManager.getList(_todoListStringIds[0])
+        //saveSharedList(listOf(), _todoListStringIds[2])
+        //saveSharedList(listOf(), _doneListStringIds[2])
+
+        //val type = object : TypeToken<List<String>>() {}.type
+        //database.getReference(sharedPreferencesManager.context.getString(_todoListStringIds[0])).get().addOnSuccessListener { _retrievedList.value = Gson().fromJson(it.value.toString(), type) }
+        //database.getReference(sharedPreferencesManager.context.getString(_doneListStringIds[0])).get().addOnSuccessListener { _doneList.value = Gson().fromJson(it.value.toString(), type) }
     }
 
-    fun markAsDone(text: String){
+    fun markAsDone(text: String) {
         val currentList = _doneList.value?.toMutableList() ?: mutableListOf()
 
-        if(currentList.contains(text)){
+        if (currentList.contains(text)) {
             currentList.remove(text)
-        }else{
+        } else {
             currentList.add(text)
         }
         _doneList.value = currentList
         saveList(currentList, _doneListStringIds[tabIndex])
     }
 
-    fun updateList(text: String, addItem: Boolean) {
-        if(text == ""){
+    fun updateList(text: String, addItem: Boolean, replace: String = "") {
+        if (text == "") {
             return
         }
-        val currentList = _retrievedList.value?.toMutableList() ?: mutableListOf()
+        val currentList = _todoList.value?.toMutableList() ?: mutableListOf()
         val doneList = _doneList.value?.toMutableList() ?: mutableListOf()
-
         if (addItem) {
-            currentList.add(text)
+            if (replace == "") {
+                currentList.add(text)
+            } else {
+                currentList.replaceAll { x ->
+                    if (x == replace) {
+                        text
+                    } else {
+                        x
+                    }
+                }
+                if (doneList.contains(replace))
+                    doneList.replaceAll { x ->
+                        if (x == replace) {
+                            text
+                        } else {
+                            x
+                        }
+                    }
+            }
+
         } else {
             currentList.remove(text)
-            if(doneList.contains(text))
+            if (doneList.contains(text))
                 doneList.remove(text)
         }
         _doneList.value = doneList
-        _retrievedList.value = currentList
+        _todoList.value = currentList
         saveList(currentList, _todoListStringIds[tabIndex])
         saveList(doneList, _doneListStringIds[tabIndex])
     }
 
-    fun changeTab(index: Int){
-        getList(sharedPreferencesManager.context.getString(_todoListStringIds[index]))
-        getList(sharedPreferencesManager.context.getString(_doneListStringIds[index]))
+    fun changeTab(index: Int) {
+        if (index <= 1) {
+            _todoList.value = sharedPreferencesManager.getList(_todoListStringIds[index])
+            _doneList.value = sharedPreferencesManager.getList(_doneListStringIds[index])
+        } else {
+            readSharedList(
+                sharedPreferencesManager.context.getString(_todoListStringIds[index]),
+                true
+            )
+            readSharedList(
+                sharedPreferencesManager.context.getString(_doneListStringIds[index]),
+                false
+            )
+        }
         tabIndex = index
     }
 
     private fun saveList(myList: List<String>, listID: Int) {
-        //sharedPreferencesManager.saveList(sharedPreferencesManager.context.getString(listID), myList)
-        saveInFirebase(myList, listID)
+        if (tabIndex <= 1) {
+            sharedPreferencesManager.saveList(
+                sharedPreferencesManager.context.getString(listID),
+                myList
+            )
+        } else {
+            saveSharedList(myList, listID)
+        }
     }
 
-    fun getList(key: String) {
+    private fun readSharedList(key: String, isTodoList: Boolean) {
         val type = object : TypeToken<List<String>>() {}.type
-        database.getReference(key).get().addOnSuccessListener { _retrievedList.value = Gson().fromJson(it.value.toString(), type) }
+        if (isTodoList) {
+            database.getReference(key)
+                .get()
+                .addOnSuccessListener {
+                    _todoList.value = Gson().fromJson(it.value.toString(), type)
+                }
+                .addOnFailureListener { _todoList.value = listOf() }
+        } else {
+            database.getReference(key)
+                .get()
+                .addOnSuccessListener {
+                    _doneList.value = Gson().fromJson(it.value.toString(), type)
+                }
+                .addOnFailureListener { _doneList.value = listOf() }
+                .addOnCanceledListener { _doneList.value = listOf() }
+        }
+
     }
 
-    private fun saveInFirebase(myList: List<String>, listID: Int){
+    private fun saveSharedList(myList: List<String>, listID: Int) {
         val myRef = database.getReference(sharedPreferencesManager.context.getString(listID))
         val gson = Gson()
         val json = gson.toJson(myList)
@@ -93,8 +148,7 @@ class MainViewModel(private var sharedPreferencesManager: SharedPreferencesManag
 
         myRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
+                // TODO
                 val value = dataSnapshot.getValue<String>()
                 Log.d(TAG, "Value is: $value")
             }
@@ -104,10 +158,5 @@ class MainViewModel(private var sharedPreferencesManager: SharedPreferencesManag
                 Log.w(TAG, "Failed to read value.", error.toException())
             }
         })
-    }
-
-    private fun readFromFirebase(){
-        // Read from the database
-
     }
 }

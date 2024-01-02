@@ -1,12 +1,19 @@
 package com.example.simpletodo
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
 import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.Icon
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -19,15 +26,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.simpletodo.ui.theme.addColor
 import com.example.simpletodo.ui.theme.checkColor
+import com.example.simpletodo.ui.theme.deleteColor
 import com.example.simpletodo.ui.theme.textColor
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
 
@@ -36,9 +45,10 @@ import com.google.accompanist.pager.rememberPagerState
 fun MainScreen(
     mainViewModel: MainViewModel
 ) {
-    val retrievedList by mainViewModel.retrievedList.observeAsState(initial = emptyList())
+    val retrievedList by mainViewModel.todoList.observeAsState(initial = emptyList())
     val doneList by mainViewModel.doneList.observeAsState(initial = emptyList())
     MainScreen(
+        mainViewModel::updateList,
         mainViewModel::updateList,
         retrievedList,
         doneList,
@@ -51,6 +61,7 @@ fun MainScreen(
 @Composable
 fun MainScreen(
     updateList: (String, Boolean) -> Unit,
+    replaceItem: (String, Boolean, String) -> Unit,
     todoList: List<String>,
     doneList: List<String>,
     markAsDone: (String) -> Unit,
@@ -73,17 +84,38 @@ fun MainScreen(
         pagerState.scrollToPage(tabIndex)
     }
     val tabs = listOf("Private", "Work", "Shared")
-    Column {
-        Text(
-            text = stringResource(id = R.string.Header),
-            fontSize = 50.sp,
-            style = TextStyle(
-                color = textColor,
-                fontWeight = FontWeight.ExtraBold,
-                textDecoration = TextDecoration.Underline
-            ),
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        )
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+        Row( modifier = Modifier
+            .fillMaxWidth()
+            .padding(end = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween) {
+            Text(
+                text = stringResource(id = R.string.Header),
+                fontSize = 50.sp,
+                style = TextStyle(
+                    color = textColor,
+                    fontWeight = FontWeight.ExtraBold,
+                    textDecoration = TextDecoration.Underline, textAlign = TextAlign.Center
+                ),
+                modifier = Modifier
+                    .weight(1f)
+            )
+
+            if(tabIndex == 2){
+                SmallFloatingActionButton(
+                    onClick = { generateQRCode("123", 64, 64) },
+                    containerColor = deleteColor,
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                ) {
+                    Icon(Icons.Filled.Share, "Generate QR")
+                }
+            }
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -123,6 +155,7 @@ fun MainScreen(
                         doneList = doneList,
                         todoList = todoList,
                         markAsDone = markAsDone,
+                        replaceItem = replaceItem
                     )
                     TextInputFieldWithAddButton(updateList)
                 }
@@ -136,6 +169,7 @@ fun MainScreen(
 @Preview
 fun PreviewMainScreen() {
     MainScreen({ _, _ -> },
+        { _, _,_ -> },
         listOf(
             "Koks essen",
             "Kokain Bär sehen",
